@@ -24,10 +24,11 @@ server.get("/", (req, res) => {
   res.send(JSON.stringify({ movie }));
 });
 
-function Movie(title, poster_path, overview) {
+function Movie(title, poster_path, overview,comment) {
   this.title = title;
   this.poster_path = poster_path;
   this.overview = overview;
+  this.comment = comment;
 }
 
 server.get("/favorite", (req, res) => {
@@ -43,6 +44,7 @@ server.post("/movie/addMovie", addMovie);
 server.put("/UPDATE/:id", updateMovieHandler);
 server.delete("/DELETE/:id", deleteMovieHandler);
 server.get("/getMovie", getMovieHandler);
+
 
 //     Handle errors
 // Create a function to handle the server error (status 500)
@@ -205,8 +207,8 @@ function addMovie(req, res) {
   const movie = req.body;
   console.log(movie);
   const sql =
-    "INSERT INTO movie (title, release_date, overview) VALUES ($1, $2, $3);";
-  const values = [movie.title, movie.release_date, movie.overview];
+    "INSERT INTO movie (title, release_date, overview, comment) VALUES ($1, $2, $3, $4);";
+  const values = [movie.title, movie.release_date, movie.overview, movie.comment];
   client
     .query(sql, values)
     .then((data) => {
@@ -222,15 +224,22 @@ function addMovie(req, res) {
 function updateMovieHandler(req,res) {
   // create an update request to update your comments for a specific movie in the database.
   const {id} = req.params
-  const sql =`UPDATE movie SET overview=$1 WHERE id=${id};`;
-  const {overview} = req.body;
-  const values = [overview];
+  const sql =`UPDATE movie SET comment=$1 WHERE id=${id};`;
+  const {comment} = req.body;
+  const values = [comment];
   client.query(sql,values).then((data)=>{
     res.send(data.rows) ////////
   }) .catch((error)=>{
     errorHandler(error,req,res)
 })
 }
+
+
+
+
+
+///updateComment/:id
+
 
 
 function deleteMovieHandler(req,res) {
